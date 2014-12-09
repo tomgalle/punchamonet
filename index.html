@@ -2,7 +2,7 @@
 
 <html>
     <head>
-        <title>My first Three.js app</title>
+        <title>PUNCH A MONET</title>
         <style>
             body { margin: 0; }
             canvas { width: 100%; height: 100% }
@@ -10,21 +10,22 @@
     </head>
     <body>
         <script src="js/three.min.js"></script>
+        <script src="js/FirstPersonControls.js"></script>
+
         <script>
 
             var scene = new THREE.Scene();
-            var camera = new THREE.PerspectiveCamera( 120, window.innerWidth / window.innerHeight, 0.1, 10000 );
+            var camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.1, 10000 );
 
             var renderer = new THREE.WebGLRenderer();
             renderer.setSize( window.innerWidth, window.innerHeight );
             document.body.appendChild( renderer.domElement );
 
-
-
             // MATERIALS
             var wallMaterial = new THREE.MeshBasicMaterial({ color: 0x834339 });
             var floorMaterial = new THREE.MeshBasicMaterial({ color: 0xA1815B });
             var roofMaterial = new THREE.MeshBasicMaterial({ color: 0xA88E7F });
+            var frameMaterial = new THREE.MeshBasicMaterial({ color: 0x917B42 });
 
 
             // BACK WALL
@@ -48,6 +49,12 @@
             scene.add( rightWall );
 
 
+            // FRONT WALL
+            var frontWallGeometry = new THREE.BoxGeometry( 400, 200, 10 );
+            var frontWall = new THREE.Mesh( backWallGeometry, wallMaterial );
+            frontWall.position.z = +200;
+            scene.add( frontWall );
+
             // FLOOR
             var floorGeometry = new THREE.BoxGeometry( 400, 10, 400 );
             var floor = new THREE.Mesh( floorGeometry, floorMaterial );
@@ -61,12 +68,33 @@
             scene.add( roof );
 
 
+            // MONET FRAME
+            var frameGeometry = new THREE.BoxGeometry( 10, 50, 75 );
+            var frame = new THREE.Mesh( frameGeometry, frameMaterial );
+            frame.position.x = +190;
+            scene.add( frame );
+
+
+
+
+
+
+
 
 
             camera.position.z = 0;
 
+            controls = new THREE.FirstPersonControls( camera );
+            controls.movementSpeed = 500000;
+            controls.lookSpeed = 300;
+            controls.lookVertical = false;           
+            var clock = new THREE.Clock();
+
+
             function render() {
                 requestAnimationFrame( render );
+                var t = clock.getElapsedTime(); 
+                controls.update( clock.getDelta() );
                 renderer.render( scene, camera );
             }
             render();
@@ -74,9 +102,19 @@
 
 
 
+
+
+
+
         </script>
     </body>
 </html>
+
+
+
+
+
+
 
 
 
