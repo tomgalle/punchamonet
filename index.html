@@ -28,6 +28,29 @@
             var frameMaterial = new THREE.MeshBasicMaterial({ color: 0x917B42 });
 
 
+
+            // var frameMaterial2 = new THREE.MeshLambertMaterial({
+            // map: THREE.ImageUtils.loadTexture('http://www.html5canvastutorials.com/demos/assets/crate.jpg')
+            // });
+
+
+
+            var texture = THREE.ImageUtils.loadTexture( "img/crate.jpg" );
+            var artMaterial = new THREE.MeshLambertMaterial({ color: 0x917B42, map: texture});
+
+
+
+
+
+            // texture.wrapS = THREE.RepeatWrapping;
+            // texture.wrapT = THREE.RepeatWrapping;
+            // texture.repeat.set( 4, 4 );
+
+
+
+
+
+
             // BACK WALL
             var backWallGeometry = new THREE.BoxGeometry( 400, 200, 10 );
             var backWall = new THREE.Mesh( backWallGeometry, wallMaterial );
@@ -69,16 +92,22 @@
 
 
             // MONET FRAME
-            var frameGeometry = new THREE.BoxGeometry( 10, 50, 75 );
-            var frame = new THREE.Mesh( frameGeometry, frameMaterial );
-            frame.position.x = +190;
+            var frameGeometry = new THREE.BoxGeometry( 40, 50, 75 );
+            var frame = new THREE.Mesh( frameGeometry, artMaterial );
+            frame.position.x = +180;
             scene.add( frame );
+            console.log(artMaterial);
+
+
+            // Add MONET IMAGE
+            // var img = new THREE.MeshBasicMaterial({map:THREE.ImageUtils.loadTexture('img/monet.jpg')});
+            // // img.position.x = -180;
+            // img.map.needsUpdate = true; //ADDED
 
 
 
-
-
-
+            // var ambientLight = new THREE.AmbientLight(0xbbbbbb);
+            // scene.add(ambientLight);
 
 
 
