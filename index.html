@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>My first Three.js app</title>
+        <style>
+            body { margin: 0; }
+            canvas { width: 100%; height: 100% }
+        </style>
+    </head>
+    <body>
+        <script src="js/three.min.js"></script>
+        <script>
+
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera( 120, window.innerWidth / window.innerHeight, 0.1, 10000 );
+
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+
+
+            // MATERIALS
+            var wallMaterial = new THREE.MeshBasicMaterial({ color: 0x834339 });
+            var floorMaterial = new THREE.MeshBasicMaterial({ color: 0xA1815B });
+            var roofMaterial = new THREE.MeshBasicMaterial({ color: 0xA88E7F });
+
+
+            // BACK WALL
+            var backWallGeometry = new THREE.BoxGeometry( 400, 200, 10 );
+            var backWall = new THREE.Mesh( backWallGeometry, wallMaterial );
+            backWall.position.z = -200;
+            scene.add( backWall );
+
+
+            // LEFT WALL
+            var leftWallGeometry = new THREE.BoxGeometry( 10, 200, 400 );
+            var leftWall = new THREE.Mesh( leftWallGeometry, wallMaterial );
+            leftWall.position.x = -200;
+            scene.add( leftWall );
+
+
+            // RIGHT WALL
+            var rightWallGeometry = new THREE.BoxGeometry( 10, 200, 400 );
+            var rightWall = new THREE.Mesh( rightWallGeometry, wallMaterial );
+            rightWall.position.x = +200;
+            scene.add( rightWall );
+
+
+            // FLOOR
+            var floorGeometry = new THREE.BoxGeometry( 400, 10, 400 );
+            var floor = new THREE.Mesh( floorGeometry, floorMaterial );
+            floor.position.y = -100;
+            scene.add( floor );
+
+            // ROOF
+            var roofGeometry = new THREE.BoxGeometry( 400, 10, 400 );
+            var roof = new THREE.Mesh( roofGeometry, roofMaterial );
+            roof.position.y = +100;
+            scene.add( roof );
+
+
+
+
+            camera.position.z = 0;
+
+            function render() {
+                requestAnimationFrame( render );
+                renderer.render( scene, camera );
+            }
+            render();
+
+
+
+
+        </script>
+    </body>
+</html>
+
+
+
+
