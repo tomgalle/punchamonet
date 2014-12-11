@@ -1,0 +1,31 @@
+# Blender MTL File: 'paintingframe.blend'
+# Material Count: 3
+
+newmtl fabric
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.249020 0.249020 0.249020
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl frame1
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.577255 0.577255 0.577255
+Ks 0.500000 0.409804 0.125490
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd painting_frame_3ds.rar Folder/FRAME.PNG
+
+newmtl frame2
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.577255 0.577255 0.577255
+Ks 0.500000 0.409804 0.125490
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd painting_frame_3ds.rar Folder/FRAME2.PNG

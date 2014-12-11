@@ -9,136 +9,330 @@
         </style>
     </head>
     <body>
-        <script src="js/three.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="js/threemin.js"></script>
         <script src="js/FirstPersonControls.js"></script>
+        <script src="js/STLLoader.js"></script>
+        <script src="js/DDSLoader.js"></script>
+		<script src="js/MTLLoader.js"></script>
+        <script src="js/OBJLoader.js"></script>
+		<script src="js/OBJMTLLoader.js"></script>
+        <script src="js/ColladaLoader.js"></script>
+        <script src="js/Tween.js"></script>
+        
 
         <script>
-
             var scene = new THREE.Scene();
-            var camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.1, 10000 );
-
+            var camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.01, 10000 );
             var renderer = new THREE.WebGLRenderer();
             renderer.setSize( window.innerWidth, window.innerHeight );
             document.body.appendChild( renderer.domElement );
 
+            var armObject;
+        
+
             // MATERIALS
-            var wallMaterial = new THREE.MeshBasicMaterial({ color: 0x834339 });
+            var wallMaterial = new THREE.MeshPhongMaterial({ color: 0x960912 });
             var floorMaterial = new THREE.MeshBasicMaterial({ color: 0xA1815B });
             var roofMaterial = new THREE.MeshBasicMaterial({ color: 0xA88E7F });
-            var frameMaterial = new THREE.MeshBasicMaterial({ color: 0x917B42 });
+            var frameMaterial = new THREE.MeshBasicMaterial({ color: 0x917B42 });        
+            
+            var textureMonet = THREE.ImageUtils.loadTexture( "img/monet.jpg" );
+            var artMaterial = new THREE.MeshPhongMaterial({ map: textureMonet });
+
+            // FLOOR TEXTURE
+            var floorTexture = new THREE.ImageUtils.loadTexture( 'img/woodfloor.jpg' );
+            floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
+            floorTexture.repeat.set( 1, 1 );
+            var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
+            var woodFloorMaterial = new THREE.MeshPhongMaterial({ map: floorTexture });
+
+             
+
+            // GENERAL LIGHT
+            var pointLight = new THREE.PointLight(0xffffff, 0.6);
+            pointLight.position.y = +150;
+            scene.add(pointLight);
+
+            // SPOTLIGHT ON MONET
+            var spotLight = new THREE.SpotLight( 0xffffff, 0.4 );
+            spotLight.position.set( -150, 80, 0 );
+
+            spotLight.castShadow = true;
+
+            spotLight.shadowMapWidth = 1024;
+            spotLight.shadowMapHeight = 1024;
+
+            spotLight.shadowCameraNear = 500;
+            spotLight.shadowCameraFar = 4000;
+            spotLight.shadowCameraFov = 30;
+
+            scene.add( spotLight );
 
 
 
-            // var frameMaterial2 = new THREE.MeshLambertMaterial({
-            // map: THREE.ImageUtils.loadTexture('http://www.html5canvastutorials.com/demos/assets/crate.jpg')
+                            
+       
+            // HAND
+
+            // var manager = new THREE.LoadingManager();
+            //     manager.onProgress = function ( item, loaded, total ) {
+            //         console.log( item, loaded, total );
+            // };
+
+            // var loader = new THREE.OBJLoader( manager );
+            // loader.load( '/models/arm_color4.obj',  function ( object ) {
+
+            //     armObject = object;
+            //     scene.add( object );
+            //     render();
+
+            // }, onProgress, onError );
+
+
+
+            // loader = new THREE.JSONLoader();
+            // loader.load( "js/armdoublesided.js", function( geometry, materials ) {
+                
+            //     var object = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
+            //     armObject = object;
+            //     scene.add( object );
+            
             // });
+        
+
+
+            // loader = new THREE.JSONLoader();
+            // loader.load( "js/paintingframe.js", function( geometry, materials ) {
+                
+            //     var object = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
+
+            //     object.position.x = +180;
+            //     object.position.y = -8;
+            //     object.rotation.set(0,-410,0);
+            //     object.scale.set(10,11,10);
+            //     scene.add( object );
+
+
+            
+            // });
+        
 
 
 
-            var texture = THREE.ImageUtils.loadTexture( "img/monet.jpg" );
-            var artMaterial = new THREE.MeshBasicMaterial({ color: 0x917B42, map: texture });
+
+
+            // ARM
+
+            var loader = new THREE.ColladaLoader();
+            loader.options.convertUpAxis = true;
+            loader.load( 'models/onearm2.dae', function ( collada ) {
+
+                dae = collada.scene;
+                scene.add( dae );
+                armObject = dae;
+
+                });
+
+
+
+            //FRAME 3MODEL
+
+            var onProgress = function ( xhr ) {
+                if ( xhr.lengthComputable ) {
+                    var percentComplete = xhr.loaded / xhr.total * 100;
+                    console.log( Math.round(percentComplete, 2) + '% downloaded' );
+                }
+            };
+
+            var onError = function ( xhr ) {};
+            THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader());
+
+            var loader = new THREE.OBJMTLLoader();
+            loader.load( 'models/frame/paintingframe_new.obj', 'models/frame/paintingframe_new.mtl', function ( object ) {
+
+                object.position.x = +199;
+                object.position.y = -8;
+                object.rotation.set(0,-410,0);
+                object.scale.set(10,11,10);
+                //object.scale(4);
+                scene.add( object );
+
+            }, onProgress, onError );
+        
+
+
+
+
+            $(document).keydown( function(key){
+
+                if (key.keyCode == 32) {
+                    
+
+                    function animate(armObject) {
+                    // var materials = skinnedMesh.material.materials;
+                 
+                    // for (var k in materials) {
+                    //     materials[k].skinning = true;
+                    // }
+                 
+                    THREE.AnimationHandler.add(skinnedMesh.geometry.animation);
+                    animation = new THREE.Animation(skinnedMesh, "ArmatureAction", THREE.AnimationHandler.CATMULLROM);
+                    animation.play();
+                }
+
+
+                }
+            
+
+
+
+            });
 
 
 
 
 
+
+
+
+            
+    //         //HAND MODEL:
+    //         var handmesh;
+    //         var loader = new THREE.STLLoader();
+				// loader.addEventListener( 'load', function ( event ) {
+				// 	var geometry = event.content;
+				// 	var materialhand = new THREE.MeshPhongMaterial( { ambient: 0x555555, color: 0xAAAAAA, specular: 0x111111, shininess: 200 } );
+				// 	handmesh = new THREE.Mesh( geometry, materialhand );
+					
+				
+					
+				// 	handmesh.scale.set( 5, 5, 5 );
+				
+					
+				// 	console.log(handmesh);
+				// 	scene.add( handmesh );
+					
+				// } );
+				// loader.load( "models/hand.stl" );
+				
+		
+
+
+	
+			
             // texture.wrapS = THREE.RepeatWrapping;
             // texture.wrapT = THREE.RepeatWrapping;
             // texture.repeat.set( 4, 4 );
-
-
-
-
-
 
             // BACK WALL
             var backWallGeometry = new THREE.BoxGeometry( 400, 200, 10 );
             var backWall = new THREE.Mesh( backWallGeometry, wallMaterial );
             backWall.position.z = -200;
             scene.add( backWall );
-
-
+            
             // LEFT WALL
             var leftWallGeometry = new THREE.BoxGeometry( 10, 200, 400 );
             var leftWall = new THREE.Mesh( leftWallGeometry, wallMaterial );
             leftWall.position.x = -200;
             scene.add( leftWall );
-
-
+            
             // RIGHT WALL
             var rightWallGeometry = new THREE.BoxGeometry( 10, 200, 400 );
             var rightWall = new THREE.Mesh( rightWallGeometry, wallMaterial );
             rightWall.position.x = +200;
             scene.add( rightWall );
-
-
+            
             // FRONT WALL
             var frontWallGeometry = new THREE.BoxGeometry( 400, 200, 10 );
             var frontWall = new THREE.Mesh( backWallGeometry, wallMaterial );
             frontWall.position.z = +200;
             scene.add( frontWall );
-
+            
             // FLOOR
             var floorGeometry = new THREE.BoxGeometry( 400, 10, 400 );
-            var floor = new THREE.Mesh( floorGeometry, floorMaterial );
+            var floor = new THREE.Mesh( floorGeometry, woodFloorMaterial );
             floor.position.y = -100;
             scene.add( floor );
-
+            
             // ROOF
             var roofGeometry = new THREE.BoxGeometry( 400, 10, 400 );
             var roof = new THREE.Mesh( roofGeometry, roofMaterial );
             roof.position.y = +100;
             scene.add( roof );
-
-
+            
             // MONET FRAME
-            var frameGeometry = new THREE.BoxGeometry( 40, 50, 75 );
+            var frameGeometry = new THREE.BoxGeometry( 1, 55, 75 );
             var frame = new THREE.Mesh( frameGeometry, artMaterial );
-            frame.position.x = +180;
+            frame.position.x = +195;
+            frame.position.y = +2;
             scene.add( frame );
             console.log(artMaterial);
+            spotLight.target = frame;
+            
+            
 
 
-            // Add MONET IMAGE
-            // var img = new THREE.MeshBasicMaterial({map:THREE.ImageUtils.loadTexture('img/monet.jpg')});
-            // // img.position.x = -180;
-            // img.map.needsUpdate = true; //ADDED
+            // if ( keyCode = 49 ){
+            //     console.log('space');
+            // }
+
+
+            // if (event.type == "keydown") {
+            //     //some browsers support evt.charCode, some only evt.keyCode
+            //    // if (event.charCode) {
+            //    //    var charCode = event.charCode;
+            //    // }
+            //    // else {
+            //    //    var charCode = event.keyCode;
+            //    // }
+            //    console.log('keydown');
+
+            // }
 
 
 
-            // var ambientLight = new THREE.AmbientLight(0xbbbbbb);
-            // scene.add(ambientLight);
 
 
 
+            // FPS CAMERA
             camera.position.z = 0;
-
             controls = new THREE.FirstPersonControls( camera );
             controls.movementSpeed = 500000;
             controls.lookSpeed = 300;
             controls.lookVertical = false;           
             var clock = new THREE.Clock();
-
-
+            
             function render() {
                 requestAnimationFrame( render );
                 var t = clock.getElapsedTime(); 
                 controls.update( clock.getDelta() );
-                renderer.render( scene, camera );
+                
+                
+                	var pos = camera.position;
+					var rot = camera.rotation;
+           
+                    armObject.position.y = camera.position.y - 0.07;
+                    armObject.position.x = camera.position.x;
+                    armObject.position.z = camera.position.z;
+
+                    armObject.rotation.y = camera.rotation.y;
+                    armObject.rotation.x = camera.rotation.x;
+                    armObject.rotation.z = camera.rotation.z;
+
+			         renderer.render( scene, camera );	
+          
+
             }
+
+            // render();
+
             render();
-
-
-
-
-
-
 
 
         </script>
     </body>
 </html>
-
 
 
 
